@@ -1,0 +1,19 @@
+{
+  "name": "share-scan",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@alpacahq/alpaca-trade-api": "^2.9.0",
+    "axios": "^0.21.4",
+    "dayjs": "^1.10.7",
+    "cheerio": "*",
+    "ts-node": "^10.4.0"
+  }
+}
