@@ -1,5 +1,6 @@
 import {Bar} from '../data-types/bar';
 import {getMaxHighBar} from '../filters/price-filters';
+const _= require('lodash');
 
 function getTrueRange(currentBar:Bar, previousBar:Bar): number {
     return Math.max(   (currentBar.HighPrice - currentBar.LowPrice),
@@ -18,17 +19,32 @@ function getAverageTrueRange(barData: Array<Bar>, period: number){
 
 const TARGET_ART_PULLBACK_VALUE = 2;
 const ATR_PERIOD = 5;
-function findATRPullbackBuySignal(tickerData: [string, Array<Bar>]): string {
+export function findATRPullbackBuySignal(tickerData: [string, Array<Bar>]): boolean {
     const barData = tickerData[1];
     const barDataForTargetPeriod = barData.slice(-10)
     const maxHighBar = getMaxHighBar(barDataForTargetPeriod);
     const maxHighBarIndex = barDataForTargetPeriod.indexOf(maxHighBar);
+    if (maxHighBarIndex === barDataForTargetPeriod.length -1) {
+        return false
+    }
+    const lastBarClosePrice = barDataForTargetPeriod[barDataForTargetPeriod.length-1].ClosePrice;
+    const averageTrueRange = getAverageTrueRange(barData, ATR_PERIOD);
+    let getAtrPullbackValue = (closePrice) => {return (maxHighBar.HighPrice- closePrice) / averageTrueRange};
     
-    const artPullbackValue = (maxHighBar.HighPrice- barData[barData.length-1].ClosePrice) / getAverageTrueRange(barData, ATR_PERIOD);
+    if (!(getAtrPullbackValue(lastBarClosePrice) > TARGET_ART_PULLBACK_VALUE)) {
+        return false
+    }
     
-    artPullbackValue > TARGET_ART_PULLBACK_VALUE
+    if (maxHighBarIndex === barDataForTargetPeriod.length - 2){
+        return true
+    }
+    
+    if (_.isEmpty(barDataForTargetPeriod.slice(maxHighBarIndex,-2).filter(bar => {
+        return getAtrPullbackValue(bar.ClosePrice) > TARGET_ART_PULLBACK_VALUE}))) 
+    {
+        return true
+    } else {return false}
     
     //(maxHigh LAST 500 DAYS - currentClose)/ATR(5) > 2 
-    // todo (tzn. ATRPULLBACK) přičmež tato podmínka musí být splněna poprvé od breakoutu! > how to check?
-    return ticker
+    // tato podmínka musí být splněna poprvé od breakoutu
 }

@@ -46,20 +46,6 @@ export async function getActualBarData(ticker: string){
     
 };
 
-/*(async function () {
-    let indexConstituents = await getIndexConstituentsTickers();
-    let exchangesSetOfConstituents = new Set(); 
-    for (const ticker of indexConstituents) {
-        let asset = await alpaca.getAsset(ticker);
-        if (asset.exchange === 'BATS') {
-            exchangesSetOfConstituents.add(ticker);    
-        }
-        console.log(Array.from(exchangesSetOfConstituents).join(' ') + ' ' + indexConstituents.indexOf(ticker));
-    }
-    
-})();*/
-
-
 
 
 

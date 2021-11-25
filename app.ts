@@ -8,7 +8,7 @@ import {
     filterByPriceChangeIncreaseHigherThan
 } from "./filters/price-filters";
 import {filterByAverageVolumeWithinPeriodHigherThan} from "./filters/volume-filters";
-import {val} from "cheerio/lib/api/attributes";
+import {findATRPullbackBuySignal} from "./indicators/atr-pullback";
 const fs = require('fs');
 const path = require('path');
 const _= require('lodash'); 
@@ -17,19 +17,26 @@ const BAR_DATA_DIR_PATH = './temp';
 
 async function main() {
     
-    /*
-    function isEmpty(path) {
-        return fs.readdirSync(path).length === 0;
-    }*/
+    let getBarDataDirectoryContent = () => {return fs.readdirSync(BAR_DATA_DIR_PATH)};
     
-    /*let countOfIterations = 0;
+    if (getBarDataDirectoryContent().length === 0) {
+        console.log('No bar data found');
+    } else {
+        let timeStamp = JSON.parse(
+            fs.readFileSync(`${BAR_DATA_DIR_PATH}/${getBarDataDirectoryContent()[0]}`)
+            )[0].Timestamp;
+        console.log(`Bar data found with timestamp: ${timeStamp}`);
+    }
+    
+    
+    let countOfIterations = 0;
     //const MAX_RETRY_COUNT = + 2;
     let expectedCountOfTickers: number;
     let indexConstituentsTickersToProcess: Array<string>;
     let chuckOfIndexConstituentsTickersToProcess: Array<string>;
     
     try {
-        indexConstituentsTickersToProcess= await getIndexConstituentsTickers();
+        indexConstituentsTickersToProcess= await getIndexConstituentsTickers('SPX');
     } catch (err) {
         console.error(err);
         process.exit(1);
@@ -62,7 +69,7 @@ async function main() {
             
             console.log(`> Finally finished!`);
             fs.readdirSync('./temp', (err, files) => {
-                console.assert(expectedCountOfTickers === files.length);
+              console.assert(expectedCountOfTickers === files.length);
             });
             break
         }
@@ -70,7 +77,7 @@ async function main() {
         console.log(`> ${indexConstituentsTickersToProcess.length} ticker(s) needs to be processed...`);
         countOfIterations++;
     
-    }*/
+    }
     
     let getDataToFilter = () => {
         let indexConstituentsTickers: Array<string> = new Array();
@@ -92,6 +99,7 @@ async function main() {
         .filter(filterByPriceChangeIncreaseHigherThan)
         .filter(filterByAverageVolumeWithinPeriodHigherThan)
         .filter(filterByBullishMaxHighReachedWithinPeriodRelativeToPeriod)
+        .filter(findATRPullbackBuySignal)
         .map(tickerData => {
             const ticker = tickerData[0];
             return ticker
