@@ -1,0 +1,9 @@
+{
+  "barDataBaseDirPath": "./temp",
+  "alpacaDetails": {
+    "keyId": "PKHPN6SI6HIB8XPAENV0",
+    "secretKey": "DnHQlqBnWmXbrK5JIPUqQE8gUDVwZUdfs9VVmGrq",
+    "paper": true,
+    "usePolygon": false
+  }
+}

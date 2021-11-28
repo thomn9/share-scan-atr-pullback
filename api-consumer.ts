@@ -1,16 +1,11 @@
 import {Bar} from './data-types/bar';
+import appconfig from './appconfig.json';
 const Alpaca = require('@alpacahq/alpaca-trade-api');
 const dayjs = require('dayjs');
 const _ = require('lodash');
 
-const alpaca = new Alpaca({
-    keyId: 'PKHPN6SI6HIB8XPAENV0',
-    secretKey: 'DnHQlqBnWmXbrK5JIPUqQE8gUDVwZUdfs9VVmGrq',
-    paper: true,
-    usePolygon: false
-})
+const alpaca = new Alpaca(appconfig.alpacaDetails)
 
-const TARGET_INDEX_ETF_TICKER = 'SPY';
 const DATE_FORMAT_TEMPLATE = 'YYYY-MM-DD';
 
 export async function getActualBarData(ticker: string){
